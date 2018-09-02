@@ -8,7 +8,16 @@ export default({ config, db }) => resource({
 
     index(_, res) {
         request({ uri }, function(error, response, body) {
-            res.send(response.body.split('dmsSigns = ')[1]);
+            const signsResponse = response.body.split('dmsSigns = ')[1];
+            const splitByLineReturn = signsResponse.split('\n');
+            const removedComments = splitByLineReturn.map((line) => {
+                if (line.includes('\/\/')) {
+                    return '';
+                }
+                return line;
+            });
+            const signReturn = removedComments.join('\n');
+            res.send(signReturn);
             return;
         });
     }
